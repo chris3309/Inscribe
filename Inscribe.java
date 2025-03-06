@@ -9,8 +9,13 @@ public class Inscribe extends JFrame {
     private List<Flashcard> flashcards;
     private int currentIndex = 0;
     private JLabel cardLabel;
+    private JPanel buttonPanel;
+    // Buttons for flipping the card, moving to the next card, and rating the difficulty.
     private JButton flipButton;
-    private JButton nextButton;
+    private JButton againButton;
+    private JButton hardButton;
+    private JButton goodButton;
+    private JButton easyButton;
     // "revealed" indicates whether the answer should be shown below the question.
     private boolean revealed = false;
 
@@ -44,25 +49,34 @@ public class Inscribe extends JFrame {
         updateCardLabel();
         cardPanel.add(cardLabel, BorderLayout.CENTER);
 
+        buttonPanel = new JPanel();
+
         // Create buttons for interaction
         flipButton = new JButton("Flip");
-        nextButton = new JButton("Next");
-
         flipButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 revealAnswer();
             }
         });
+        buttonPanel.add(flipButton);
+        
+        // Create buttons for rating the difficulty
+        againButton = new JButton("Again");
+        hardButton = new JButton("Hard");
+        goodButton = new JButton("Good");
+        easyButton = new JButton("Easy");
 
-        nextButton.addActionListener(new ActionListener() {
+        ActionListener ratingListener = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                // Handle the rating logic here
                 nextCard();
             }
-        });
+        };
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(flipButton);
-        buttonPanel.add(nextButton);
+        againButton.addActionListener(ratingListener);
+        hardButton.addActionListener(ratingListener);
+        goodButton.addActionListener(ratingListener);
+        easyButton.addActionListener(ratingListener);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(cardPanel, BorderLayout.CENTER);
@@ -86,8 +100,15 @@ public class Inscribe extends JFrame {
     // Reveals the answer below the question.
     private void revealAnswer() {
         if (!revealed) {
-            revealed = true;
+            revealed = true;    
             updateCardLabel();
+            buttonPanel.removeAll();
+            buttonPanel.add(againButton);
+            buttonPanel.add(hardButton);
+            buttonPanel.add(goodButton);
+            buttonPanel.add(easyButton);
+            buttonPanel.revalidate();
+            buttonPanel.repaint();
         }
     }
 
@@ -96,6 +117,10 @@ public class Inscribe extends JFrame {
         currentIndex = (currentIndex + 1) % flashcards.size();
         revealed = false;
         updateCardLabel();
+        buttonPanel.removeAll();
+        buttonPanel.add(flipButton);
+        buttonPanel.revalidate();
+        buttonPanel.repaint();
     }
 
     public static void main(String[] args) {
