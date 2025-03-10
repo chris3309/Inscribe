@@ -4,12 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
 public class Inscribe extends JFrame {
     private List<Flashcard> flashcards;
     private int currentIndex = 0;
     private JLabel cardLabel;
     private JPanel buttonPanel;
+    private JPanel topPanel;
     // Buttons for flipping the card, moving to the next card, and rating the difficulty.
     private JButton flipButton;
     private JButton againButton;
@@ -21,7 +23,7 @@ public class Inscribe extends JFrame {
 
     public Inscribe() {
         setTitle("Inscribe");
-        setSize(400, 300);
+        setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -31,15 +33,19 @@ public class Inscribe extends JFrame {
 
     private void initializeFlashcards() {
         flashcards = new ArrayList<>();
-        flashcards.add(new Flashcard("What is the capital of France?", "Paris"));
-        flashcards.add(new Flashcard("What is the largest planet in our solar system?", "Jupiter"));
-        flashcards.add(new Flashcard("What is the smallest prime number?", "2"));
+        flashcards.add(new Flashcard("John 3:16"));
+        flashcards.add(new Flashcard("Revelation 1:17-18"));
+        flashcards.add(new Flashcard("Philippians 4:13"));
+        //System.out.println(flashcards.get(0).getVerse("John 3:16"));
     }
 
     private void initializeUI() {
+
+        
+
         // Create a panel to represent the flashcard with a border
         JPanel cardPanel = new JPanel();
-        cardPanel.setBorder(new LineBorder(Color.BLACK, 2, true));
+        cardPanel.setBorder(new LineBorder(Color.BLACK, 1, true));
         cardPanel.setLayout(new BorderLayout());
         cardPanel.setBackground(Color.WHITE);
 
@@ -81,6 +87,21 @@ public class Inscribe extends JFrame {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(cardPanel, BorderLayout.CENTER);
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+        topPanel = new JPanel();
+        topPanel.setBackground(Color.LIGHT_GRAY);
+        topPanel.setBorder(new LineBorder(Color.BLACK, 1, true));
+        //topPanel.setLayout(new BorderLayout());
+        JButton addButton = new JButton("Add Flashcard");
+        
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Handle adding a new flashcard here
+                addNewCard();
+            }
+        });
+        topPanel.add(addButton);
+        getContentPane().add(topPanel, BorderLayout.NORTH);
+
     }
 
     private void updateCardLabel() {
@@ -88,15 +109,32 @@ public class Inscribe extends JFrame {
         if (revealed) {
             // Both question and answer are shown.
             cardLabel.setText("<html><div style='text-align: center; padding: 20px;'>"
-                              + card.getQuestion() + "<br><br>" + card.getAnswer() 
+                              + card.getVerse() + "<br><br>" + card.getReference() 
                               + "</div></html>");
         } else {
             // Only the question is shown.
             cardLabel.setText("<html><div style='text-align: center; padding: 20px;'>"
-                              + card.getQuestion() + "</div></html>");
+                              + card.getVerse() + "</div></html>");
         }
     }
-
+    
+    private void addNewCard(){
+        String newReference = JOptionPane.showInputDialog(
+            this,
+            "Enter a Bible Verse",
+            "Add Flashcard",
+            JOptionPane.PLAIN_MESSAGE
+        );
+        if(newReference != null && !newReference.trim().isEmpty()){
+            flashcards.add(new Flashcard(newReference.trim()));
+            JOptionPane.showMessageDialog(
+                this,
+                "Flashcard added successfully!",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+    }
     // Reveals the answer below the question.
     private void revealAnswer() {
         if (!revealed) {
