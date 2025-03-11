@@ -5,6 +5,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.util.Scanner;
+import java.io.File;
 
 public class Inscribe extends JFrame {
     private List<Flashcard> flashcards;
@@ -20,6 +22,8 @@ public class Inscribe extends JFrame {
     private JButton easyButton;
     // "revealed" indicates whether the answer should be shown below the question.
     private boolean revealed = false;
+    // File in which flashcards are stored
+    private static final String FILE_NAME = "flashcards.txt";
 
     public Inscribe() {
         setTitle("Inscribe");
@@ -33,6 +37,42 @@ public class Inscribe extends JFrame {
 
     private void initializeFlashcards() {
         flashcards = new ArrayList<>();
+        //open file and read flashcards
+        try{
+            File fcardsVerses = new File(FILE_NAME);
+            if(fcardsVerses.exists()){
+                Scanner reader = new Scanner(fcardsVerses);
+                while(reader.hasNextLine()){
+                    String verse = reader.nextLine();
+                    flashcards.add(new Flashcard(verse));
+                }
+                reader.close();
+            }
+            else{
+                System.out.println("Flashcards file not found");
+                System.out.println("Creating new file...");
+                try{
+                    File newFile = new File(FILE_NAME);
+                    if(newFile.createNewFile()){
+                        System.out.println("File created: " + newFile.getName());
+                    }
+                    else{
+                        System.out.println("File already exists.");
+                    }
+                } catch(Exception e){
+                    System.out.println("An error occurred.");
+                    e.printStackTrace();
+                }
+            }
+            
+        }
+        catch(Exception e){
+            System.out.println("Error reading flashcards from file: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+
+
         flashcards.add(new Flashcard("John 3:16"));
         flashcards.add(new Flashcard("Revelation 1:17-18"));
         flashcards.add(new Flashcard("Philippians 4:13"));
