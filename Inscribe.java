@@ -4,9 +4,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 import java.util.Scanner;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 
 public class Inscribe extends JFrame {
     private List<Flashcard> flashcards;
@@ -167,6 +169,13 @@ public class Inscribe extends JFrame {
         );
         if(newReference != null && !newReference.trim().isEmpty()){
             flashcards.add(new Flashcard(newReference.trim()));
+            try(BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME, true))){
+                writer.write(newReference.trim());
+                writer.newLine();
+            } catch(Exception e){
+                System.out.println("Error writing to file: " + e.getMessage());
+                e.printStackTrace();
+            }
             JOptionPane.showMessageDialog(
                 this,
                 "Flashcard added successfully!",
